@@ -137,7 +137,7 @@ CONTRACT=0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
 
 ### Collect Statistics
 
-Start collecting statistics before running the rounds (on the [`experiment`](../experiment/) directory):
+Start collecting statistics before running the rounds (on the results repository):
 
 ```bash
 ./monitor.sh
@@ -163,7 +163,7 @@ python3 toolkit.py collect-logs
 
 ## Contract
 
-Some *required* base information for the contract can be found in [migrations/bootstrap.json](../migrations/bootstrap.json). This file includes two fields that must be filled before deploying the contract:
+Some *required* base information for the contract can be found in [../contracts.json](../contracts.json). This file includes two fields that must be filled before deploying the contract:
 
 - `model`: the IPFS CID of the exported model in `.h5` format.
 - `weights` (optional): the IPFS CID with the initial weights.
