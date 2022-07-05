@@ -1,0 +1,20 @@
+ARG BASE='ethereum/client-go:v1.10.16'
+
+FROM $BASE
+
+RUN apk update && apk add jq bind-tools
+
+ARG GENESIS='genesis_pow.json'
+
+COPY testbed/docker/eth_run_miner.sh /run_miner.sh
+COPY testbed/docker/eth_run_owner.sh /run_owner.sh
+COPY testbed/ethereum/datadir/accounts.json /
+COPY testbed/ethereum/datadir/$GENESIS /genesis.json
+COPY testbed/ethereum/datadir/keystore /root/.ethereum/keystore
+COPY testbed/ethereum/datadir/geth/static-nodes.json /root/.ethereum/geth/static-nodes.json
+COPY testbed/ethereum/datadir/geth /root/.ethereum/_geth
+
+RUN geth init /genesis.json \
+  && rm -f ~/.ethereum/geth/nodekey
+
+ENTRYPOINT ["geth"]

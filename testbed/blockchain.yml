@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  geth-rpc-endpoint:
+    hostname: geth-rpc-endpoint
+    env_file:
+      - ethereum/.env
+    image: geth-node-$CONSENSUS
+    entrypoint: /run_owner.sh
+    command:
+      --allow-insecure-unlock
+      --http
+      --http.addr="0.0.0.0"
+      --http.api="eth,web3,net,admin,personal"
+      --http.corsdomain="*"
+      --netrestrict="172.16.254.0/20"
+    ports:
+      - "8545:8545"
+
+  geth-miner:
+    hostname: geth-miner
+    deploy:
+      replicas: $MINERS
+    env_file:
+      - ethereum/.env
+    image: geth-node-$CONSENSUS
+    entrypoint: /run_miner.sh
+    command:
+      --mine
+      --miner.threads=1
+      --allow-insecure-unlock
+      --http
+      --http.addr="0.0.0.0"
+      --http.api="eth,web3,net,admin,personal"
+      --http.corsdomain="*"
+      --netrestrict="172.16.254.0/20"
+
+networks:
+  default:
+    external:
+      name: bflnet
+

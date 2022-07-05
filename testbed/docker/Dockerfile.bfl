@@ -1,0 +1,26 @@
+FROM tensorflow/tensorflow:2.8.0
+
+RUN apt update && \
+  apt install -y jq dnsutils wget net-tools
+
+RUN python -m pip install --upgrade pip && \
+  pip install tensorflow web3 idx2numpy numpy click diffprivlib
+
+RUN wget https://dist.ipfs.io/go-ipfs/v0.12.2/go-ipfs_v0.12.2_linux-amd64.tar.gz && \
+  tar -xvzf go-ipfs_v0.12.2_linux-amd64.tar.gz && \
+  cd go-ipfs && \
+  bash install.sh && \
+  ipfs --version
+
+RUN mkdir -p /root/dataset
+
+COPY testbed/ethereum/datadir/accounts.json /root/accounts.json
+COPY testbed/run_server.py /root/run_server.py
+COPY testbed/docker/run_server.sh /root/run_server.sh
+COPY testbed/run_client.py /root/run_client.py
+COPY testbed/docker/run_client.sh /root/run_client.sh
+COPY blocklearning /root/blocklearning
+
+WORKDIR /root
+
+ENTRYPOINT ["/bin/bash"]

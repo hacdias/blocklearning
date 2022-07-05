@@ -1,0 +1,62 @@
+5a6
+> import math
+7a9
+> from sklearn.model_selection import train_test_split
+13c15
+< num_clients = 20
+---
+> num_clients = [5, 10, 25, 50]
+22,29d23
+<         
+<     # Setup directory for train/test data
+<     config_path = dir_path + "config.json"
+<     train_path = dir_path + "train/"
+<     test_path = dir_path + "test/"
+< 
+<     if check(config_path, train_path, test_path, num_clients, num_classes, niid, real, partition):
+<         return
+60a55,56
+>     dataset_image = [np.swapaxes(image, 0, 2) for image in dataset_image]
+>     dataset_image = [np.swapaxes(image, 0, 1) for image in dataset_image]
+64,73c60,89
+<     # dataset = []
+<     # for i in range(num_classes):
+<     #     idx = dataset_label == i
+<     #     dataset.append(dataset_image[idx])
+< 
+<     X, y, statistic = separate_data((dataset_image, dataset_label), num_clients, num_classes, 
+<                                     niid, real, partition)
+<     train_data, test_data = split_data(X, y)
+<     save_file(config_path, train_path, test_path, train_data, test_data, num_clients, num_classes, 
+<         statistic, niid, real, partition)
+---
+>     for clients in num_clients:
+>         part = (2500 * clients) / len(dataset_label)
+>         print(part)
+> 
+>         X, y = dataset_image, dataset_label
+>         if part > 1:
+>             (_, r) = math.modf(part)
+>             r += 1
+>             part = part / r
+>             X = np.repeat(X, r, axis=0)
+>             y = np.repeat(y, r, axis=0)
+> 
+>         X, _, y, _ = train_test_split(X, y, train_size=part, random_state=1, stratify=y)
+> 
+>         # Setup directory for train/test data
+>         config_path = dir_path + str(clients) + "/config.json"
+>         train_path = dir_path + str(clients) + "/train/"
+>         test_path = dir_path + str(clients) + "/test/"
+> 
+>         if check(config_path, train_path, test_path, num_clients, num_classes, niid, real, partition):
+>             continue
+> 
+>         owner_x, _, owner_y, _ = train_test_split(X, y, train_size=5000, random_state=1, stratify=y)
+>         with open(dir_path + str(clients) + '/owner_val.npz', 'wb') as f:
+>             np.savez_compressed(f, data={'x':owner_x, 'y':owner_y})
+> 
+>         X, y, statistic = separate_data((X, y), clients, num_classes, niid, real, partition)
+>         train_data, test_data = split_data(X, y)
+>         save_file(config_path, train_path, test_path, train_data, test_data, clients, num_classes, statistic, niid, real, partition)
+>

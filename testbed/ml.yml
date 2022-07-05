@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  server:
+    hostname: server
+    image: bfl-node
+    entrypoint: /root/run_server.sh
+    deploy:
+      replicas: $SERVERS
+    environment:
+      - IPFS_API=/dns/host.docker.internal/tcp/5001
+      - CONTRACT=$CONTRACT
+      - SCORING=$SCORING
+      - MINERS=$MINERS
+    volumes:
+      # Use the following volume for a public validation dataset:
+      - './datasets/$DATASET/5:/root/dataset'
+      # - './datasets/$DATASET/$SERVERS:/root/dataset'
+      - ../build/contracts/$ABI.json:/root/abi.json
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+  client:
+    hostname: client
+    image: bfl-node
+    entrypoint: /root/run_client.sh
+    deploy:
+      replicas: $CLIENTS
+    environment:
+      - IPFS_API=/dns/host.docker.internal/tcp/5001
+      - CONTRACT=$CONTRACT
+      - SCORING=$SCORING
+      - MINERS=$MINERS
+    volumes:
+      - './datasets/$DATASET/$CLIENTS:/root/dataset'
+      - ../build/contracts/$ABI.json:/root/abi.json
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+networks:
+  default:
+    external:
+      name: bflnet
