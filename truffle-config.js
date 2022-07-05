@@ -1,4 +1,4 @@
-const accounts = require('../thesis/testbed/ethereum/datadir/accounts.json')
+const accounts = require('./testbed/ethereum/datadir/accounts.json')
 
 module.exports = {
   networks: {
