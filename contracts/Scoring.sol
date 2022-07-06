@@ -37,12 +37,19 @@ contract Scoring is Base {
     return isInAddressArray(selectedScorers[round], msg.sender);
   }
 
-  function startRoundWithScoring(address[] memory roundTrainers, address[] memory roundAggregators, address[] memory roundScorers) public {
+  function startRound(address[] memory roundTrainers, address[] memory roundAggregators, address[] memory roundScorers) public {
+    require(msg.sender == owner, "NOWN");
+    require(roundPhase == RoundPhase.Stopped, "NS");
+    require(roundTrainers.length > 0, "TR");
+    require(roundAggregators.length > 0, "VR");
     require(roundScorers.length > 0, "VS");
-    require(scorers.length > 0, "NO_REGISTRATIONS_SCORERS");
+    require(aggregators.length > 0 && trainers.length > 0 && scorers.length > 0, "NO_REGISTRATIONS");
 
-    selectedScorers[round+1] = roundScorers;
-    startRound(roundTrainers, roundAggregators);
+    round++;
+    selectedTrainers[round] = roundTrainers;
+    selectedAggregators[round] = roundAggregators;
+    selectedScorers[round] = roundScorers;
+    roundPhase = RoundPhase.WaitingForSubmissions;
   }
 
   function getSubmissionsForScoring() public view returns (uint, address[] memory, Submission[] memory) {

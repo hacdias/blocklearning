@@ -95,19 +95,6 @@ abstract contract Base {
     return isInAddressArray(selectedTrainers[round], msg.sender);
   }
 
-  function startRound(address[] memory roundTrainers, address[] memory roundAggregators) public virtual {
-    require(msg.sender == owner, "NOWN");
-    require(roundPhase == RoundPhase.Stopped, "NS");
-    require(roundTrainers.length > 0, "TR");
-    require(roundAggregators.length > 0, "VR");
-    require(aggregators.length > 0 && trainers.length > 0, "NO_REGISTRATIONS");
-
-    round++;
-    selectedTrainers[round] = roundTrainers;
-    selectedAggregators[round] = roundAggregators;
-    roundPhase = RoundPhase.WaitingForSubmissions;
-  }
-
   function getRoundForTraining() public view virtual returns (uint, string memory) {
     require(roundPhase == RoundPhase.WaitingForSubmissions, "NWFS");
     require(isSelectedTrainer(), "TNP");

@@ -28,6 +28,7 @@ class RoundPhase(Enum):
   WAITING_FOR_SCORINGS = 2
   WAITING_FOR_AGGREGATIONS = 3
   WAITING_FOR_TERMINATION = 4
+  WAITING_FOR_BACKPROPAGATION = 5
 
 class Contract():
   def __init__(self, log, provider, abi_file, account, passphrase, contract_address):
@@ -109,19 +110,9 @@ class Contract():
     tx = self.contract.functions.submitAggregation(weights_id).transact(self.default_opts)
     return tx, self.__wait_tx(tx)
 
-  def start_quorum_round(self, number_trainers, aggregators):
+  def start_round(self, *args):
     self.__unlock_account()
-    tx = self.contract.functions.startQuorumRound(number_trainers, aggregators).transact(self.default_opts)
-    return tx, self.__wait_tx(tx)
-
-  def start_round(self, trainers, aggregators):
-    self.__unlock_account()
-    tx = self.contract.functions.startRound(trainers, aggregators).transact(self.default_opts)
-    return tx, self.__wait_tx(tx)
-
-  def start_round_with_scoring(self, trainers, aggregators, scorers):
-    self.__unlock_account()
-    tx = self.contract.functions.startRoundWithScoring(trainers, aggregators, scorers).transact(self.default_opts)
+    tx = self.contract.functions.startRound(*args).transact(self.default_opts)
     return tx, self.__wait_tx(tx)
 
   def terminate_round(self):
