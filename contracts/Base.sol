@@ -14,7 +14,8 @@ abstract contract Base {
     WaitingForSubmissions,
     WaitingForScorings,
     WaitingForAggregations,
-    WaitingForTermination
+    WaitingForTermination,
+    WaitingForBackpropagation
   }
 
   // Initialization Details
@@ -94,7 +95,7 @@ abstract contract Base {
     return isInAddressArray(selectedTrainers[round], msg.sender);
   }
 
-  function startRound(address[] memory roundTrainers, address[] memory roundAggregators) public {
+  function startRound(address[] memory roundTrainers, address[] memory roundAggregators) public virtual {
     require(msg.sender == owner, "NOWN");
     require(roundPhase == RoundPhase.Stopped, "NS");
     require(roundTrainers.length > 0, "TR");
@@ -141,7 +142,7 @@ abstract contract Base {
     return (round, roundTrainers, roundSubmissions);
   }
 
-  function submitAggregation(string memory aweights) public {
+  function submitAggregation(string memory aweights) public virtual {
     require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
     require(aggregationsSubmitted[round][msg.sender] == false, "AS");
     require(isSelectedAggregator() == true, "CSNS");

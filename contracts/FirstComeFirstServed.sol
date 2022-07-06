@@ -12,6 +12,10 @@ contract FirstComeFirstServed is Base {
     RoundPhase.WaitingForAggregations
   ) {}
 
+  function startRound(address[] memory roundTrainers, address[] memory roundAggregators) public override {
+    require(false, "QUORUM");
+  }
+
   function startQuorumRound(uint roundTrainers, address[] memory roundAggregators) public {
     require(msg.sender == owner, "NOWN");
     require(roundPhase == RoundPhase.Stopped, "NS");
