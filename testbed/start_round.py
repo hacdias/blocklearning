@@ -15,7 +15,7 @@ import blocklearning.weights_loaders as weights_loaders
 import blocklearning.utilities as butilities
 
 # Setup Log
-log_file = '../experiment/results/CURRENT/logs/manager.log'
+log_file = '../../blocklearning-results/results/CURRENT/logs/manager.log'
 os.makedirs(os.path.dirname(log_file), exist_ok=True)
 if os.path.exists(log_file):
   print('a log already exists, please make sure to save the previous logs')
@@ -93,15 +93,15 @@ def main(provider, abi, contract, scoring, trainers, aggregators,  data_dir, val
     return accuracy
 
   for i in range(0, rounds):
-    trainers, aggregators, scorers = choose_participants()
-    log.info(json.dumps({ 'event': 'start', 'trainers': trainers, 'aggregators': aggregators, 'scorers': scorers, 'ts': time.time_ns() }))
+    round_trainers, round_aggregators, round_scorers = choose_participants()
+    log.info(json.dumps({ 'event': 'start', 'trainers': round_trainers, 'aggregators': round_aggregators, 'scorers': round_scorers, 'ts': time.time_ns() }))
 
     if trainers == 'fcfs':
-      contract.start_quorum_round(trainers, aggregators)
+      contract.start_round(round_trainers, round_aggregators)
     elif scoring != 'none':
-      contract.start_round_with_scoring(trainers, aggregators, scorers)
+      contract.start_round(round_trainers, round_aggregators, round_scorers)
     else:
-      contract.start_round(trainers, aggregators)
+      contract.start_round(round_trainers, round_aggregators)
 
     round = contract.get_round()
 
