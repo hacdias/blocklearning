@@ -15,10 +15,10 @@ class VerticalAggregator():
   def aggregate(self):
     (round, trainers, submissions) = self.contract.get_submissions_for_aggregation()
 
-    weights_id = self.contract.get_weights(round)
+    weights_id = self.contract.get_weights(round - 1)
     if weights_id != "":
       weights = self.datastore.load(weights_id)
-      self.model.set_weights(weights  - 1)
+      self.model.set_weights(weights)
 
     if self.logger is not None:
       self.logger.info(json.dumps({ 'event': 'start', 'submissions': submissions, 'round': round, 'ts': time.time_ns() }))
