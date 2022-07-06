@@ -16,11 +16,7 @@ contract Vertical is Base {
     RoundPhase.WaitingForAggregations
   ) { }
 
-  function startRound(address[] memory roundTrainers, address[] memory roundAggregators) public override {
-    require(false, "VERTICAL");
-  }
-
-  function startVerticalRound() public {
+  function startRound() public {
     require(msg.sender == owner, "NOWN");
     require(roundPhase == RoundPhase.Stopped, "NS");
     require(aggregators.length > 0 && trainers.length > 0, "NO_REGISTRATIONS");
@@ -32,25 +28,13 @@ contract Vertical is Base {
     roundPhase = RoundPhase.WaitingForSubmissions;
   }
 
-  function submitAggregation(string memory aweights) public override {
-    require(false, "VERTICAL");
+  function submitAggregation(string memory _weights) public pure override {
+    revert("Direct Call");
   }
 
   function submitAggregationWithGradients(string memory aweights, address[] memory gradTrainers, string[] memory roundGrads) public {
-    require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
-    require(aggregationsSubmitted[round][msg.sender] == false, "AS");
     require(gradTrainers.length == roundGrads.length, "NES");
-    require(isSelectedAggregator() == true, "CSNS");
-
-    for (uint i = 0; i < selectedTrainers[round].length; i++) {
-      require(isInAddressArray(gradTrainers, selectedTrainers[round][i]), "SM");
-    }
-
-    aggregationsSubmitted[round][msg.sender] = true;
-    aggregationsCount[round]++;
-
-    aggregationsResults[round].push(aweights);
-    aggregationsResultsCount[round][aweights]++;
+    super._submitAggregation(aweights);
 
     for (uint i = 0; i < gradTrainers.length; i++) {
       grads[round][gradTrainers[i]][msg.sender] = roundGrads[i];
@@ -59,6 +43,21 @@ contract Vertical is Base {
     if (aggregationsCount[round] == selectedAggregators[round].length) {
       roundPhase = RoundPhase.WaitingForBackpropagation;
     }
+  }
+
+  function getGradients() public view returns (address[] memory, string[] memory) {
+    require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
+    require(isSelectedAggregator(), "CSNS");
+
+    address roundAggregator = aggregators[currentAggregator];
+    address[] memory roundTrainers = selectedTrainers[round];
+    string[] memory roundGrads = new string[](selectedTrainers[round].length);
+
+    for (uint i = 0; i < selectedTrainers[round].length; i++) {
+      roundGrads[i] = grads[round][roundTrainers[i]][roundAggregator];
+    }
+
+    return (roundTrainers, roundGrads);
   }
 
   function confirmBackpropagation() public {

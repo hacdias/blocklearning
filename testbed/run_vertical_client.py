@@ -48,7 +48,7 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train, test, s
       phase = contract.get_round_phase()
       if phase == RoundPhase.WAITING_FOR_SUBMISSIONS:
         trainer.forward()
-      elif phase == RoundPhase.WAITING_FOR_BACKWARD:
+      elif phase == RoundPhase.WAITING_FOR_BACKPROPAGATION:
         trainer.backward()
     except web3.exceptions.ContractLogicError as err:
       print(err, flush=True)

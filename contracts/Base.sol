@@ -129,7 +129,7 @@ abstract contract Base {
     return (round, roundTrainers, roundSubmissions);
   }
 
-  function submitAggregation(string memory aweights) public virtual {
+  function _submitAggregation(string memory aweights) internal virtual {
     require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
     require(aggregationsSubmitted[round][msg.sender] == false, "AS");
     require(isSelectedAggregator() == true, "CSNS");
@@ -143,6 +143,11 @@ abstract contract Base {
     if (aggregationsCount[round] == selectedAggregators[round].length) {
       roundPhase = RoundPhase.WaitingForTermination;
     }
+  }
+
+
+  function submitAggregation(string memory _weights) public virtual {
+    _submitAggregation(_weights);
   }
 
   function terminateRound() public {
