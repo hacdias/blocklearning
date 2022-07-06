@@ -29,7 +29,7 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train):
 
   # Load Model
   model_loader = model_loaders.IpfsModelLoader(contract, datastore, ipfs_api=ipfs)
-  model = model_loader.load()
+  model = model_loader.load_bottom()
 
   trainer = blocklearning.VerticalTrainer(contract, model, x_train, datastore, logger=log)
 

@@ -23,7 +23,7 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train):
   datastore = weights_loaders.IpfsWeightsLoader(ipfs)
 
   model_loader = model_loaders.IpfsModelLoader(contract, datastore, ipfs_api=ipfs)
-  model = model_loader.load()
+  model = model_loader.load_top()
 
   # Load Label Data
   _, y_train = utilities.numpy_load(train)

@@ -43,6 +43,12 @@ class Contract():
   def get_model(self):
     return self.contract.functions.model().call(self.default_opts)
 
+  def get_top_model(self):
+    return self.get_model()
+
+  def get_bottom_model(self):
+    return self.contract.functions.bottomModel().call(self.default_opts)
+
   def get_weights(self, round):
     return self.contract.functions.weights(round).call(self.default_opts)
 

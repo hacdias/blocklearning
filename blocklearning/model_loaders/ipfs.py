@@ -10,10 +10,7 @@ class IpfsModelLoader():
     self.ipfs_api = ipfs_api
     pass
 
-  def load(self):
-    model_cid = self.contract.get_model()
-    weights_cid = self.contract.get_weights(0)
-
+  def __load(self, model_cid, weights_cid = ""):
     with tempfile.TemporaryDirectory() as tempdir:
       model_path = os.path.join(tempdir, 'model.h5')
       os.system(f"ipfs get --api {self.ipfs_api} -o {model_path} {model_cid}")
@@ -24,3 +21,16 @@ class IpfsModelLoader():
       model.set_weights(weights)
 
     return Model(model)
+
+  def load(self):
+    model_cid = self.contract.get_model()
+    weights_cid = self.contract.get_weights(0)
+    return self.__load(model_cid, weights_cid)
+
+  def load_top(self):
+    model_cid = self.contract.get_top_model()
+    return self.__load(model_cid)
+
+  def load_bottom(self):
+    model_cid = self.contract.get_bottom_model()
+    return self.__load(model_cid)

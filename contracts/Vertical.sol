@@ -4,17 +4,20 @@ pragma solidity >=0.8.0 <0.9.0;
 import './Base.sol';
 
 contract Vertical is Base {
-  uint public currentAggregator;
+  uint    public currentAggregator;
+  string  public bottomModel; // IPFS CID for model encoded as h5.
 
   mapping(uint => uint) public backpropagationsCount;                       // Round => Confirmed Backpropagations
   mapping(uint => mapping(address => bool)) backpropagationsConfirmed;      // Round => Address => Bool
   mapping(uint => mapping(address => mapping(address => string))) grads;    // Round => Trainer => Aggregator => String
 
-  constructor(string memory _model, string memory _weights) Base(
-    _model,
+  constructor(string memory _topModel, string memory _bottomModel, string memory _weights) Base(
+    _topModel,
     _weights,
     RoundPhase.WaitingForAggregations
-  ) { }
+  ) {
+    bottomModel = _bottomModel;
+  }
 
   function startRound() public {
     require(msg.sender == owner, "NOWN");
