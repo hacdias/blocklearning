@@ -18,28 +18,23 @@ from blocklearning.contract import RoundPhase
 @click.option('--log', help='logging file', required=True)
 @click.option('--train', help='training data .npz file', required=True)
 def main(provider, ipfs, abi, account, passphrase, contract, log, train):
-  log = utilities.setup_logger(log, "client")
+  log = utilities.setup_logger(log, "server")
+  contract = blocklearning.Contract(log, provider, abi, account, passphrase, contract)
   datastore = weights_loaders.IpfsWeightsLoader(ipfs)
 
-  # Load Training Data
-  x_train, _ = utilities.numpy_load(train)
-
-  # Get Contract and Register as Trainer
-  contract = blocklearning.Contract(log, provider, abi, account, passphrase, contract)
-
-  # Load Model
   model_loader = model_loaders.IpfsModelLoader(contract, datastore, ipfs_api=ipfs)
   model = model_loader.load()
 
-  trainer = blocklearning.VerticalTrainer(contract, model, x_train, datastore, logger=log)
+  # Load Label Data
+  _, y_train = utilities.numpy_load(train)
+
+  aggregator = blocklearning.VerticalAggregator(contract, datastore, model, y_train, logger=log)
 
   while True:
     try:
       phase = contract.get_round_phase()
-      if phase == RoundPhase.WAITING_FOR_SUBMISSIONS:
-        trainer.forward()
-      elif phase == RoundPhase.WAITING_FOR_BACKPROPAGATION:
-        trainer.backward()
+      if phase == RoundPhase.WAITING_FOR_AGGREGATIONS:
+        aggregator.aggregate()
     except web3.exceptions.ContractLogicError as err:
       print(err, flush=True)
     except requests.exceptions.ReadTimeout as err:

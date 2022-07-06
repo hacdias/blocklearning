@@ -77,9 +77,8 @@ class Contract():
     [trainers, scorers, scores] = self.contract.functions.getScorings().call(self.default_opts)
     return (trainers, scorers, scores)
 
-  def get_gradients(self):
-    [trainers, gradients] = self.contract.functions.getGradients().call(self.default_opts)
-    return (trainers, gradients)
+  def get_gradient(self):
+    return self.contract.functions.getGradient().call(self.default_opts)
 
   def register_as_trainer(self):
     self.__unlock_account()

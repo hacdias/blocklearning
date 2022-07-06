@@ -45,23 +45,16 @@ contract Vertical is Base {
     }
   }
 
-  function getGradients() public view returns (address[] memory, string[] memory) {
-    require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
-    require(isSelectedAggregator(), "CSNS");
+  function getGradient() public view returns (string memory) {
+    require(roundPhase == RoundPhase.WaitingForBackpropagation, "NWFB");
+    require(isSelectedTrainer(), "TNP");
 
     address roundAggregator = aggregators[currentAggregator];
-    address[] memory roundTrainers = selectedTrainers[round];
-    string[] memory roundGrads = new string[](selectedTrainers[round].length);
-
-    for (uint i = 0; i < selectedTrainers[round].length; i++) {
-      roundGrads[i] = grads[round][roundTrainers[i]][roundAggregator];
-    }
-
-    return (roundTrainers, roundGrads);
+    return grads[round][msg.sender][roundAggregator];
   }
 
   function confirmBackpropagation() public {
-    require(roundPhase == RoundPhase.WaitingForBackpropagation, "NWFS");
+    require(roundPhase == RoundPhase.WaitingForBackpropagation, "NWFB");
     require(backpropagationsConfirmed[round][msg.sender] == false, "AS");
     require(isSelectedTrainer(), "TNP");
 
