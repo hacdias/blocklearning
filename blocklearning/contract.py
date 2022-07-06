@@ -77,6 +77,10 @@ class Contract():
     [trainers, scorers, scores] = self.contract.functions.getScorings().call(self.default_opts)
     return (trainers, scorers, scores)
 
+  def get_gradients(self):
+    [trainers, gradients] = self.contract.functions.getGradients().call(self.default_opts)
+    return (trainers, gradients)
+
   def register_as_trainer(self):
     self.__unlock_account()
     if not self.contract.functions.registeredTrainers(self.account).call(self.default_opts):
@@ -108,6 +112,16 @@ class Contract():
   def submit_aggregation(self, weights_id):
     self.__unlock_account()
     tx = self.contract.functions.submitAggregation(weights_id).transact(self.default_opts)
+    return tx, self.__wait_tx(tx)
+
+  def submit_aggregation_with_gradients(self, weights_id, trainers, gradients_ids):
+    self.__unlock_account()
+    tx = self.contract.functions.submitAggregationWithGradients(weights_id, trainers, gradients_ids).transact(self.default_opts)
+    return tx, self.__wait_tx(tx)
+
+  def confirm_backpropagation(self):
+    self.__unlock_account()
+    tx = self.contract.functions.confirmBackpropagation().transact(self.default_opts)
     return tx, self.__wait_tx(tx)
 
   def start_round(self, *args):
