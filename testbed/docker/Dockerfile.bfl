@@ -19,6 +19,10 @@ COPY testbed/run_server.py /root/run_server.py
 COPY testbed/docker/run_server.sh /root/run_server.sh
 COPY testbed/run_client.py /root/run_client.py
 COPY testbed/docker/run_client.sh /root/run_client.sh
+COPY testbed/run_vertical_server.py /root/run_vertical_server.py
+COPY testbed/docker/run_vertical_server.sh /root/run_vertical_server.sh
+COPY testbed/run_vertical_client.py /root/run_vertical_client.py
+COPY testbed/docker/run_vertical_client.sh /root/run_vertical_client.sh
 COPY blocklearning /root/blocklearning
 
 WORKDIR /root

@@ -211,3 +211,17 @@ python3 start_round.py \
   --scoring "<mechanism>" \
   --rounds 50
 ```
+
+### Vertical
+
+```bash
+CONSENSUS=poa MINERS=10 docker compose -f blockchain.yml -p bfl up
+
+CONTRACT=0x4A59e668c68c7915bCdfD5530B7C1C3D0F83885f \
+  DATASET=../../blocklearning-results/datasets/vertical-mnist MINERS=10 SERVERS=5 CLIENTS=2 \
+  docker compose -f vml.yml -p bfl-vml up
+
+python3 start_vertical_round.py \
+  --contract 0x4A59e668c68c7915bCdfD5530B7C1C3D0F83885f \
+  --rounds 50
+```

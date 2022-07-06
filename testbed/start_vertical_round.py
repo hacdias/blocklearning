@@ -31,7 +31,7 @@ def get_owner_account(data_dir):
 
 @click.command()
 @click.option('--provider', default='http://127.0.0.1:8545', help='web3 API HTTP provider')
-@click.option('--abi', default='../build/contracts/NoScoring.json', help='contract abi file')
+@click.option('--abi', default='../build/contracts/Vertical.json', help='contract abi file')
 @click.option('--contract', required=True, help='contract address')
 @click.option('--data-dir', default=utilities.default_datadir, help='ethereum data directory path')
 @click.option('--rounds', default=1, type=click.INT, help='number of rounds')

@@ -50,6 +50,7 @@ contract Vertical is Base {
 
   function getGradient() public view returns (string memory) {
     require(roundPhase == RoundPhase.WaitingForBackpropagation, "NWFB");
+    require(backpropagationsConfirmed[round][msg.sender] == false, "AS");
     require(isSelectedTrainer(), "TNP");
 
     address roundAggregator = aggregators[currentAggregator];

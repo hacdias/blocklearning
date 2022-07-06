@@ -16,8 +16,9 @@ class VerticalAggregator():
     (round, trainers, submissions) = self.contract.get_submissions_for_aggregation()
 
     weights_id = self.contract.get_weights(round)
-    weights = self.datastore.load(weights_id)
-    self.model.set_weights(weights  - 1)
+    if weights_id != "":
+      weights = self.datastore.load(weights_id)
+      self.model.set_weights(weights  - 1)
 
     if self.logger is not None:
       self.logger.info(json.dumps({ 'event': 'start', 'submissions': submissions, 'round': round, 'ts': time.time_ns() }))
@@ -45,7 +46,8 @@ class VerticalAggregator():
     y_pred = logits
 
     self.model.model.compiled_metrics.update_state(y_true, y_pred)
-    accuracy = self.model.model.metrics[0].result().numpy()
+    metrics = { m.name: m.result().numpy() for m in self.model.model.metrics }
+    accuracy = metrics['sparse_categorical_accuracy']
 
     if self.logger is not None:
       self.logger.info(json.dumps({ 'event': 'fedavg_end', 'round': round,'ts': time.time_ns() }))
