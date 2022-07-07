@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  server:
+    hostname: server
+    image: bfl-node
+    entrypoint: /root/run_vertical_server.sh
+    deploy:
+      replicas: $SERVERS
+    environment:
+      - IPFS_API=/dns/host.docker.internal/tcp/5001
+      - CONTRACT=$CONTRACT
+      - MINERS=$MINERS
+    volumes:
+      - '$DATASET/$CLIENTS:/root/dataset'
+      - ../build/contracts/Vertical.json:/root/abi.json
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+  client:
+    hostname: client
+    image: bfl-node
+    entrypoint: /root/run_vertical_client.sh
+    deploy:
+      replicas: $CLIENTS
+    environment:
+      - IPFS_API=/dns/host.docker.internal/tcp/5001
+      - CONTRACT=$CONTRACT
+      - MINERS=$MINERS
+    volumes:
+      - '$DATASET/$CLIENTS:/root/dataset'
+      - ../build/contracts/Vertical.json:/root/abi.json
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+networks:
+  default:
+    external:
+      name: bflnet
