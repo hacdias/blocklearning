@@ -24,28 +24,28 @@ abstract contract Base {
   RoundPhase afterUpdate;
 
   // Registration Details
-  address[]                 public aggregators;
-  mapping(address => bool)  public registeredAggregators;
-  address[]                 public trainers;
-  mapping(address => bool)  public registeredTrainers;
+  address[]                 aggregators;
+  mapping(address => bool)  registeredAggregators;
+  address[]                 trainers;
+  mapping(address => bool)  registeredTrainers;
 
   // Round Details
   uint                        public round = 0;
   RoundPhase                  public roundPhase = RoundPhase.Stopped;
   mapping(uint => string)     public weights;                   // Round => Weights CID
-  mapping(uint => address[])  public selectedTrainers;          // Round => Trainers for the round
-  mapping(uint => address[])  public selectedAggregators;       // Round => Aggregators for the round
+  mapping(uint => address[])  selectedTrainers;          // Round => Trainers for the round
+  mapping(uint => address[])  selectedAggregators;       // Round => Aggregators for the round
 
   // Updates Details
-  mapping(uint => uint) public submissionsCount;                      // Round => Submited Updates
+  mapping(uint => uint) submissionsCount;                      // Round => Submited Updates
   mapping(uint => mapping(address => bool)) submissionsSubmitted;     // Round => Address => Bool
   mapping(uint => mapping(address => Update)) public submissions; // Round => Address => Update
 
   // Aggregations Details
-  mapping(uint => uint) aggregationsCount;                           // Round => Submited Aggregations
-  mapping(uint => mapping(address => bool)) aggregationsSubmitted;   // Round => Address => Bool
-  mapping(uint => string[]) aggregationsResults;                     // Round => []CID
-  mapping(uint => mapping(string => uint)) aggregationsResultsCount; // Round => CID => Count
+  mapping(uint => uint)                     aggregationsCount;        // Round => Submited Aggregations
+  mapping(uint => mapping(address => bool)) aggregationsSubmitted;    // Round => Address => Bool
+  mapping(uint => string[])                 aggregationsResults;      // Round => []CID
+  mapping(uint => mapping(string => uint))  aggregationsResultsCount; // Round => CID => Count
 
   constructor(string memory _model, string memory _weights, RoundPhase _afterUpdate) {
     owner = msg.sender;

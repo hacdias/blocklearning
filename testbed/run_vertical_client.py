@@ -36,7 +36,7 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train):
   while True:
     try:
       phase = contract.get_round_phase()
-      if phase == RoundPhase.WAITING_FOR_SUBMISSIONS:
+      if phase == RoundPhase.WAITING_FOR_UPDATES:
         trainer.forward()
       elif phase == RoundPhase.WAITING_FOR_BACKPROPAGATION:
         trainer.backward()

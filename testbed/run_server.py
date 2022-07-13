@@ -50,7 +50,7 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, val, scoring):
       phase = contract.get_round_phase()
       if phase == RoundPhase.WAITING_FOR_AGGREGATIONS:
         aggregator.aggregate()
-      elif phase == RoundPhase.WAITING_FOR_SCORINGS and scorer is not None:
+      elif phase == RoundPhase.WAITING_FOR_SCORES and scorer is not None:
         scorer.score()
     except web3.exceptions.ContractLogicError as err:
       print(err, flush=True)

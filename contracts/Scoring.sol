@@ -5,16 +5,16 @@ import './Base.sol';
 
 contract Score is Base {
   // Registration Details
-  address[]                 public scorers;
-  mapping(address => bool)  public registeredScorers;
+  address[]                scorers;
+  mapping(address => bool) registeredScorers;
 
   // Round Details
-  mapping(uint => address[])  public selectedScorers; // Round => Scorers for the round
+  mapping(uint => address[]) selectedScorers; // Round => Scorers for the round
 
   // Score Details
   mapping(uint => uint) scoresCount;                                    // Round => Submited Scores
   mapping(uint => mapping(address => bool)) scoresSubmitted;            // Round => Scorer => Bool
-  mapping(uint => mapping(address => mapping(address => int))) scores;  // Round => Trainer => Scorer => Uint
+  mapping(uint => mapping(address => mapping(address => int))) public scores;  // Round => Trainer => Scorer => Uint
 
   constructor(string memory _model, string memory _weights) Base(
     _model,
@@ -25,7 +25,7 @@ contract Score is Base {
   function registerScorer() public {
     if (registeredScorers[msg.sender] == false) {
       scorers.push(msg.sender);
-      registeredScorers[msg.sender] = true;
+      registeredScorers[msg.sen der] = true;
     }
   }
 

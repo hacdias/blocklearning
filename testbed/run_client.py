@@ -38,7 +38,7 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train, test, s
 
   # Set Gaussian Differential Privacy
   priv = None
-  # priv = diffpriv.Gaussian(epsilon=5, sensitivity=1e-1/3)
+  # priv = diffpriv.Gaussian(epsilon=l5, sensitivity=1e-1/3)
   # priv = diffpriv.Gaussian(epsilon=1, sensitivity=1e-1/2)
 
   trainer = blocklearning.Trainer(contract, weights_loader, model, (x_train, y_train, x_test, y_test), logger=log, priv=priv)
@@ -56,9 +56,9 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train, test, s
   while True:
     try:
       phase = contract.get_round_phase()
-      if phase == RoundPhase.WAITING_FOR_SUBMISSIONS:
+      if phase == RoundPhase.WAITING_FOR_UPDATES:
         trainer.train()
-      elif phase == RoundPhase.WAITING_FOR_SCORINGS and scorer is not None:
+      elif phase == RoundPhase.WAITING_FOR_SCORES and scorer is not None:
         scorer.score()
     except web3.exceptions.ContractLogicError as err:
       print(err, flush=True)
