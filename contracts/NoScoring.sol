@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import './Base.sol';
 
-contract NoScoring is Base {
+contract NoScore is Base {
   constructor(string memory _model, string memory _weights) Base(
     _model,
     _weights,
@@ -20,6 +20,6 @@ contract NoScoring is Base {
     round++;
     selectedTrainers[round] = roundTrainers;
     selectedAggregators[round] = roundAggregators;
-    roundPhase = RoundPhase.WaitingForSubmissions;
+    roundPhase = RoundPhase.WaitingForUpdates;
   }
 }

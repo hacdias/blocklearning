@@ -35,7 +35,7 @@ def get_owner_account(data_dir):
 
 @click.command()
 @click.option('--provider', default='http://127.0.0.1:8545', help='web3 API HTTP provider')
-@click.option('--abi', default='../build/contracts/NoScoring.json', help='contract abi file')
+@click.option('--abi', default='../build/contracts/NoScore.json', help='contract abi file')
 @click.option('--contract', required=True, help='contract address')
 @click.option('--scoring', default='none', help='scoring method')
 @click.option('--trainers', default='random', help='clients selection method')
@@ -77,7 +77,7 @@ def main(provider, abi, contract, scoring, trainers, aggregators,  data_dir, val
       aggregator_index = (aggregator_index + 1) % len(all_aggregators)
       round_aggregators = [all_aggregators[aggregator_index]]
 
-    if scoring == 'multi-krum' or scoring=='data-validity':
+    if scoring == 'multi-krum':
       round_scorers = round_aggregators
     elif scoring == 'blockflow' or scoring == 'marginal-gain':
       round_scorers = round_trainers

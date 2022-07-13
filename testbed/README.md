@@ -19,8 +19,8 @@ This directory contains all the necessary code to run experiments using the [`bl
 - [How to Run Different Experiments](#how-to-run-different-experiments)
   - [Consensus Algorithms](#consensus-algorithms)
   - [Selection Mechanisms](#selection-mechanisms)
-  - [Without Scoring Mechanisms](#without-scoring-mechanisms)
-  - [With Scoring Mechanisms](#with-scoring-mechanisms)
+  - [Without Score Mechanisms](#without-scoring-mechanisms)
+  - [With Score Mechanisms](#with-scoring-mechanisms)
 
 ## Setup
 
@@ -99,7 +99,7 @@ python3 toolkit.py deploy-contract
 ```bash
 CONTRACT=0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
   DATASET=mnist MINERS=10 AGGREGATORS=10 SCORERS=0 TRAINERS=25 \
-  SCORING="none" ABI=NoScoring \
+  SCORING="none" ABI=NoScore \
   docker compose -f ml.yml -p bfl-ml up
 ```
 
@@ -116,7 +116,7 @@ Start collecting statistics before running the rounds (on the results repository
 ```bash
 python3 start_round.py \
   --contract 0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
-  --abi ../build/contracts/NoScoring.json \
+  --abi ../build/contracts/NoScore.json \
   --rounds 50 \
   --aggregators rr
 ```
@@ -153,12 +153,12 @@ CONSENSUS=poa|pow|qbft MINERS=10 docker compose -f blockchain.yml -p bfl up
 
 CONTRACT=0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
   DATASET=mnist MINERS=10 SERVERS=10 CLIENTS=25 \
-  SCORING="none" ABI=NoScoring \
+  SCORING="none" ABI=NoScore \
   docker compose -f ml.yml -p bfl-ml up
 
 python3 start_round.py \
   --contract 0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
-  --abi ../build/contracts/NoScoring.json \
+  --abi ../build/contracts/NoScore.json \
   --rounds 50
 ```
 
@@ -179,35 +179,35 @@ python3 start_round.py \
   --rounds 50
 ```
 
-### Without Scoring Mechanisms
+### Without Score Mechanisms
 
 ```bash
 CONSENSUS=poa MINERS=10 docker compose -f blockchain.yml -p bfl up
 
 CONTRACT=0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
   DATASET=mnist MINERS=10 SERVERS=10 CLIENTS=5|10|25|50 \
-  SCORING="none" ABI=NoScoring \
+  SCORING="none" ABI=NoScore \
   docker compose -f ml.yml -p bfl-ml up
 
 python3 start_round.py \
   --contract 0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
-  --abi ../build/contracts/NoScoring.json \
+  --abi ../build/contracts/NoScore.json \
   --rounds 50
 ```
 
-### With Scoring Mechanisms
+### With Score Mechanisms
 
 ```bash
 CONSENSUS=poa MINERS=10 docker compose -f blockchain.yml -p bfl up
 
 CONTRACT=0x2988207C0b2666E554A803D25524B0822bd1B1A8 \
   DATASET=mnist MINERS=10 SERVERS=10 CLIENTS=5|10|25|50 \
-  SCORING="<mechanism>" ABI=Scoring \
+  SCORING="<mechanism>" ABI=Score \
   docker compose -f ml.yml -p bfl-ml up
 
 python3 start_round.py \
   --contract 0x2988207C0b2666E554A803D25524B0822bd1B1A8 \
-  --abi ../build/contracts/Scoring.json \
+  --abi ../build/contracts/Score.json \
   --scoring "<mechanism>" \
   --rounds 50
 ```

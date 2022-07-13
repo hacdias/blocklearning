@@ -1,6 +1,6 @@
-const NoScoring = artifacts.require("NoScoring");
+const NoScore = artifacts.require("NoScore");
 const bootstrap = require('../contracts.json');
 
 module.exports = function (deployer) {
-  deployer.deploy(NoScoring, bootstrap.model, bootstrap.weights);
+  deployer.deploy(NoScore, bootstrap.model, bootstrap.weights);
 };

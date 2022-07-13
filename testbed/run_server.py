@@ -13,7 +13,7 @@ from blocklearning.contract import RoundPhase
 @click.command()
 @click.option('--provider', default='http://127.0.0.1:8545', help='web3 API HTTP provider')
 @click.option('--ipfs', default='/ip4/127.0.0.1/tcp/5001', help='IPFS API provider')
-@click.option('--abi', default='./build/contracts/NoScoring.json', help='contract abi file')
+@click.option('--abi', default='./build/contracts/NoScore.json', help='contract abi file')
 @click.option('--account', help='ethereum account to use for this computing server', required=True)
 @click.option('--passphrase', help='passphrase to unlock account', required=True)
 @click.option('--contract', help='contract address', required=True)
@@ -34,8 +34,6 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, val, scoring):
     aggregator = aggregators.MultiKrumAggregator(model.count, weights_loader)
   elif scoring == 'blockflow':
     aggregator = aggregators.BlockFlowAggregator(model.count, weights_loader)
-  elif scoring == 'data-validity':
-    aggregator = aggregators.DataValidityAggregator(model.count, weights_loader)
   else:
     aggregator = aggregators.FedAvgAggregator(model.count, weights_loader)
 
@@ -44,8 +42,6 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, val, scoring):
   scorer = None
   if scoring == 'multi-krum':
     scorer = scorers.MultiKrumScorer(weights_loader)
-  elif scoring == 'data-validity':
-    scorer = scorers.DataValidityScorer(log, contract, model, weights_loader, val)
   if scorer is not None:
     scorer = blocklearning.Scorer(contract, scorer=scorer, logger=log)
 

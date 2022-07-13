@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 abstract contract Base {
-   struct Submission {
+   struct Update {
     uint trainingAccuracy;
     uint testingAccuracy;
     uint trainingDataPoints;
@@ -11,8 +11,8 @@ abstract contract Base {
 
   enum RoundPhase {
     Stopped,
-    WaitingForSubmissions,
-    WaitingForScorings,
+    WaitingForUpdates,
+    WaitingForScores,
     WaitingForAggregations,
     WaitingForTermination,
     WaitingForBackpropagation
@@ -21,7 +21,7 @@ abstract contract Base {
   // Initialization Details
   address public owner;
   string  public model; // IPFS CID for model encoded as h5.
-  RoundPhase afterSubmission;
+  RoundPhase afterUpdate;
 
   // Registration Details
   address[]                 public aggregators;
@@ -36,10 +36,10 @@ abstract contract Base {
   mapping(uint => address[])  public selectedTrainers;          // Round => Trainers for the round
   mapping(uint => address[])  public selectedAggregators;       // Round => Aggregators for the round
 
-  // Submissions Details
-  mapping(uint => uint) public submissionsCount;                      // Round => Submited Submissions
+  // Updates Details
+  mapping(uint => uint) public submissionsCount;                      // Round => Submited Updates
   mapping(uint => mapping(address => bool)) submissionsSubmitted;     // Round => Address => Bool
-  mapping(uint => mapping(address => Submission)) public submissions; // Round => Address => Submission
+  mapping(uint => mapping(address => Update)) public submissions; // Round => Address => Update
 
   // Aggregations Details
   mapping(uint => uint) aggregationsCount;                           // Round => Submited Aggregations
@@ -47,11 +47,11 @@ abstract contract Base {
   mapping(uint => string[]) aggregationsResults;                     // Round => []CID
   mapping(uint => mapping(string => uint)) aggregationsResultsCount; // Round => CID => Count
 
-  constructor(string memory _model, string memory _weights, RoundPhase _afterSubmission) {
+  constructor(string memory _model, string memory _weights, RoundPhase _afterUpdate) {
     owner = msg.sender;
     model = _model;
     weights[0] = _weights;
-    afterSubmission = _afterSubmission;
+    afterUpdate = _afterUpdate;
   }
 
   function registerAggregator() public {
@@ -96,13 +96,13 @@ abstract contract Base {
   }
 
   function getRoundForTraining() public view virtual returns (uint, string memory) {
-    require(roundPhase == RoundPhase.WaitingForSubmissions, "NWFS");
+    require(roundPhase == RoundPhase.WaitingForUpdates, "NWFS");
     require(isSelectedTrainer(), "TNP");
     return (round, weights[round - 1]);
   }
 
-  function submitSubmission(Submission memory submission) public virtual {
-    require(roundPhase == RoundPhase.WaitingForSubmissions, "NWFS");
+  function submitUpdate(Update memory submission) public virtual {
+    require(roundPhase == RoundPhase.WaitingForUpdates, "NWFS");
     require(submissionsSubmitted[round][msg.sender] == false, "AS");
     require(isSelectedTrainer(), "TNP");
 
@@ -111,22 +111,22 @@ abstract contract Base {
     submissionsCount[round]++;
 
     if (submissionsCount[round] == selectedTrainers[round].length) {
-      roundPhase = afterSubmission;
+      roundPhase = afterUpdate;
     }
   }
 
-  function getSubmissionsForAggregation() public view returns (uint, address[] memory, Submission[] memory) {
+  function getUpdatesForAggregation() public view returns (uint, address[] memory, Update[] memory) {
     require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
     require(isSelectedAggregator() == true, "CSNS");
 
-    Submission[] memory roundSubmissions = new Submission[](selectedTrainers[round].length);
+    Update[] memory roundUpdates = new Update[](selectedTrainers[round].length);
     address[] memory roundTrainers = new address[](selectedTrainers[round].length);
     for (uint i = 0; i < selectedTrainers[round].length; i++) {
       address trainer = selectedTrainers[round][i];
       roundTrainers[i] = trainer;
-      roundSubmissions[i] = submissions[round][trainer];
+      roundUpdates[i] = submissions[round][trainer];
     }
-    return (round, roundTrainers, roundSubmissions);
+    return (round, roundTrainers, roundUpdates);
   }
 
   function _submitAggregation(string memory aweights) internal virtual {

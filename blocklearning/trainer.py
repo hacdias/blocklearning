@@ -35,7 +35,7 @@ class Trainer():
 
     weights = self.model.get_weights()
     if self.priv is not None:
-      weights = self.priv(weights, validationAccuracy)
+      weights = self.priv.privatize(weights, validationAccuracy)
 
     weights_id = self.weights_loader.store(weights)
 
