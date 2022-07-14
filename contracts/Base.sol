@@ -20,8 +20,8 @@ abstract contract Base {
 
   // Initialization Details
   address public owner;
-  string  public model; // IPFS CID for model encoded as h5.
-  RoundPhase afterUpdate;
+  string  public model;     // IPFS CID for model encoded as h5.
+  RoundPhase afterUpdate;   // Which phase is executed after WaitingForUpdates.
 
   // Registration Details
   address[]                 aggregators;
@@ -32,20 +32,20 @@ abstract contract Base {
   // Round Details
   uint                        public round = 0;
   RoundPhase                  public roundPhase = RoundPhase.Stopped;
-  mapping(uint => string)     public weights;                   // Round => Weights CID
-  mapping(uint => address[])  selectedTrainers;          // Round => Trainers for the round
-  mapping(uint => address[])  selectedAggregators;       // Round => Aggregators for the round
+  mapping(uint => string)     public weights;             // Round => Weights ID
+  mapping(uint => address[])  public selectedTrainers;    // Round => Trainers for the round
+  mapping(uint => address[])  public selectedAggregators; // Round => Aggregators for the round
 
   // Updates Details
-  mapping(uint => uint) submissionsCount;                      // Round => Submited Updates
-  mapping(uint => mapping(address => bool)) submissionsSubmitted;     // Round => Address => Bool
-  mapping(uint => mapping(address => Update)) public submissions; // Round => Address => Update
+  mapping(uint => uint) updatesCount;                           // Round => Submited Updates
+  mapping(uint => mapping(address => bool)) updatesSubmitted;   // Round => Address => Bool
+  mapping(uint => mapping(address => Update)) public updates;   // Round => Address => Update
 
   // Aggregations Details
-  mapping(uint => uint)                     aggregationsCount;        // Round => Submited Aggregations
-  mapping(uint => mapping(address => bool)) aggregationsSubmitted;    // Round => Address => Bool
-  mapping(uint => string[])                 aggregationsResults;      // Round => []CID
-  mapping(uint => mapping(string => uint))  aggregationsResultsCount; // Round => CID => Count
+  mapping(uint => uint)                       aggregationsCount;        // Round => Submited Aggregations
+  mapping(uint => mapping(address => bool))   aggregationsSubmitted;    // Round => Address => Bool
+  mapping(uint => mapping(address => string)) public aggregations;      // Round => Address => Weights ID
+  mapping(uint => mapping(string => uint))    aggregationsResultsCount; // Round => Weights ID => Count
 
   constructor(string memory _model, string memory _weights, RoundPhase _afterUpdate) {
     owner = msg.sender;
@@ -103,14 +103,14 @@ abstract contract Base {
 
   function submitUpdate(Update memory submission) public virtual {
     require(roundPhase == RoundPhase.WaitingForUpdates, "NWFS");
-    require(submissionsSubmitted[round][msg.sender] == false, "AS");
+    require(updatesSubmitted[round][msg.sender] == false, "AS");
     require(isSelectedTrainer(), "TNP");
 
-    submissions[round][msg.sender] = submission;
-    submissionsSubmitted[round][msg.sender] = true;
-    submissionsCount[round]++;
+    updates[round][msg.sender] = submission;
+    updatesSubmitted[round][msg.sender] = true;
+    updatesCount[round]++;
 
-    if (submissionsCount[round] == selectedTrainers[round].length) {
+    if (updatesCount[round] == selectedTrainers[round].length) {
       roundPhase = afterUpdate;
     }
   }
@@ -124,21 +124,20 @@ abstract contract Base {
     for (uint i = 0; i < selectedTrainers[round].length; i++) {
       address trainer = selectedTrainers[round][i];
       roundTrainers[i] = trainer;
-      roundUpdates[i] = submissions[round][trainer];
+      roundUpdates[i] = updates[round][trainer];
     }
     return (round, roundTrainers, roundUpdates);
   }
 
-  function _submitAggregation(string memory aweights) internal virtual {
+  function _submitAggregation(string memory aggregation) internal virtual {
     require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
     require(aggregationsSubmitted[round][msg.sender] == false, "AS");
     require(isSelectedAggregator() == true, "CSNS");
 
+    aggregations[round][msg.sender] = aggregation;
     aggregationsSubmitted[round][msg.sender] = true;
     aggregationsCount[round]++;
-
-    aggregationsResults[round].push(aweights);
-    aggregationsResultsCount[round][aweights]++;
+    aggregationsResultsCount[round][aggregation]++;
 
     if (aggregationsCount[round] == selectedAggregators[round].length) {
       roundPhase = RoundPhase.WaitingForTermination;
@@ -153,12 +152,13 @@ abstract contract Base {
   function terminateRound() public {
     require(roundPhase == RoundPhase.WaitingForTermination, "NWFT");
 
+    uint minQuorum = selectedAggregators[round].length * 50 / 100 + 1;
     uint count;
-    uint minQuorum = selectedAggregators[round].length / 2 + 1;
     string memory roundWeights;
 
-    for (uint i = 0; i < aggregationsResults[round].length; i++) {
-      string memory w = aggregationsResults[round][i];
+    for (uint i = 0; i < selectedAggregators[round].length; i++) {
+      address aggregator = selectedAggregators[round][i];
+      string memory w = aggregations[round][aggregator];
       uint c = aggregationsResultsCount[round][w];
       if (c >= minQuorum) {
         if (c > count) {

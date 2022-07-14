@@ -31,7 +31,7 @@ contract FirstComeFirstServed is Base {
   }
 
   function submitUpdate(Update memory submission) public override {
-    require(submissionsCount[round] < trainersQuorum[round], "QR");
+    require(updatesCount[round] < trainersQuorum[round], "QR");
 
     if (!isSelectedTrainer()) {
       selectedTrainers[round].push(msg.sender);
@@ -39,7 +39,7 @@ contract FirstComeFirstServed is Base {
 
     super.submitUpdate(submission);
 
-    if (submissionsCount[round] < trainersQuorum[round]) {
+    if (updatesCount[round] < trainersQuorum[round]) {
       roundPhase = RoundPhase.WaitingForUpdates;
     } else {
       roundPhase = afterUpdate;

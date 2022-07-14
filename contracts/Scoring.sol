@@ -62,7 +62,7 @@ contract Score is Base {
     for (uint i = 0; i < selectedTrainers[round].length; i++) {
       address trainer = selectedTrainers[round][i];
       roundTrainers[i] = trainer;
-      roundUpdates[i] = submissions[round][trainer];
+      roundUpdates[i] = updates[round][trainer];
     }
 
     return (round, roundTrainers, roundUpdates);
