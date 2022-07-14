@@ -25,7 +25,7 @@ contract Score is Base {
   function registerScorer() public {
     if (registeredScorers[msg.sender] == false) {
       scorers.push(msg.sender);
-      registeredScorers[msg.sen der] = true;
+      registeredScorers[msg.sender] = true;
     }
   }
 
