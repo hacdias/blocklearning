@@ -117,8 +117,7 @@ Start collecting statistics before running the rounds (on the results repository
 python3 start_round.py \
   --contract 0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
   --abi ../build/contracts/NoScore.json \
-  --rounds 50 \
-  --aggregators rr
+  --rounds 50
 ```
 
 ### Collect Logs
