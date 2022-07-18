@@ -24,10 +24,10 @@ abstract contract Base {
   RoundPhase afterUpdate;   // Which phase is executed after WaitingForUpdates.
 
   // Registration Details
-  address[]                 aggregators;
-  mapping(address => bool)  registeredAggregators;
-  address[]                 trainers;
-  mapping(address => bool)  registeredTrainers;
+  address[]                 public aggregators;
+  mapping(address => bool)  public registeredAggregators;
+  address[]                 public trainers;
+  mapping(address => bool)  public registeredTrainers;
 
   // Round Details
   uint                        public round = 0;
