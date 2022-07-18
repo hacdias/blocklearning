@@ -5,8 +5,8 @@ import './Base.sol';
 
 contract Score is Base {
   // Registration Details
-  address[]                scorers;
-  mapping(address => bool) registeredScorers;
+  address[]                public scorers;
+  mapping(address => bool) public registeredScorers;
 
   // Round Details
   mapping(uint => address[]) selectedScorers; // Round => Scorers for the round
