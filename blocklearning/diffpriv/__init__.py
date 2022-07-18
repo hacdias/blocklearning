@@ -1,1 +1,1 @@
-from .gaussian import Gaussian, AdaptiveGaussian
+from .gaussian import Gaussian

@@ -1,6 +1,6 @@
-const Scoring = artifacts.require("Scoring");
+const Score = artifacts.require("Score");
 const bootstrap = require('../contracts.json');
 
 module.exports = function (deployer) {
-  deployer.deploy(Scoring, bootstrap.model, bootstrap.weights);
+  deployer.deploy(Score, bootstrap.model, bootstrap.weights);
 };

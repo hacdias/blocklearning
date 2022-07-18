@@ -35,15 +35,14 @@ def get_owner_account(data_dir):
 
 @click.command()
 @click.option('--provider', default='http://127.0.0.1:8545', help='web3 API HTTP provider')
-@click.option('--abi', default='../build/contracts/NoScoring.json', help='contract abi file')
+@click.option('--abi', default='../build/contracts/NoScore.json', help='contract abi file')
 @click.option('--contract', required=True, help='contract address')
 @click.option('--scoring', default='none', help='scoring method')
 @click.option('--trainers', default='random', help='clients selection method')
-@click.option('--aggregators', default='all', help='servers selection method')
 @click.option('--data-dir', default=utilities.default_datadir, help='ethereum data directory path')
 @click.option('--val', default='./datasets/mnist/5/owner_val.npz', help='validation data .npz file')
 @click.option('--rounds', default=1, type=click.INT, help='number of rounds')
-def main(provider, abi, contract, scoring, trainers, aggregators,  data_dir, val, rounds):
+def main(provider, abi, contract, scoring, trainers,  data_dir, val, rounds):
   account_address, account_password = get_owner_account(data_dir)
   contract = blocklearning.Contract(log, provider, abi, account_address, account_password, contract)
   weights_loader = weights_loaders.IpfsWeightsLoader()
@@ -51,16 +50,12 @@ def main(provider, abi, contract, scoring, trainers, aggregators,  data_dir, val
   model = model_loader.load()
   x_val, y_val = butilities.numpy_load(val)
 
-  aggregator_index = -1
-
   def choose_participants():
     all_trainers = contract.get_trainers()
     all_aggregators = contract.get_aggregators()
 
-    global aggregator_index
-
     round_trainers = None
-    round_aggregators = None
+    round_aggregators = all_aggregators
     round_scorers = None
 
     if trainers == 'random':
@@ -71,13 +66,7 @@ def main(provider, abi, contract, scoring, trainers, aggregators,  data_dir, val
     elif trainers == 'all':
       round_trainers = all_trainers
 
-    if aggregators == 'all':
-      round_aggregators = all_aggregators
-    elif aggregators == 'rr':
-      aggregator_index = (aggregator_index + 1) % len(all_aggregators)
-      round_aggregators = [all_aggregators[aggregator_index]]
-
-    if scoring == 'multi-krum' or scoring=='data-validity':
+    if scoring == 'multi-krum':
       round_scorers = round_aggregators
     elif scoring == 'blockflow' or scoring == 'marginal-gain':
       round_scorers = round_trainers

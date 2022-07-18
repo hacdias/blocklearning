@@ -24,8 +24,8 @@ def get_abi(filename):
 
 class RoundPhase(Enum):
   STOPPED = 0
-  WAITING_FOR_SUBMISSIONS = 1
-  WAITING_FOR_SCORINGS = 2
+  WAITING_FOR_UPDATES = 1
+  WAITING_FOR_SCORES = 2
   WAITING_FOR_AGGREGATIONS = 3
   WAITING_FOR_TERMINATION = 4
   WAITING_FOR_BACKPROPAGATION = 5
@@ -72,15 +72,15 @@ class Contract():
     return (round, weights_cid)
 
   def get_submissions_for_scoring(self):
-    [round, trainers, submissions] = self.contract.functions.getSubmissionsForScoring().call(self.default_opts)
+    [round, trainers, submissions] = self.contract.functions.getUpdatesForScore().call(self.default_opts)
     return (round, trainers, submissions)
 
   def get_submissions_for_aggregation(self):
-    [round, trainers, submissions] = self.contract.functions.getSubmissionsForAggregation().call(self.default_opts)
+    [round, trainers, submissions] = self.contract.functions.getUpdatesForAggregation().call(self.default_opts)
     return (round, trainers, submissions)
 
   def get_scorings(self):
-    [trainers, scorers, scores] = self.contract.functions.getScorings().call(self.default_opts)
+    [trainers, scorers, scores] = self.contract.functions.getScores().call(self.default_opts)
     return (trainers, scorers, scores)
 
   def get_gradient(self):
@@ -106,12 +106,12 @@ class Contract():
 
   def submit_submission(self, submission):
     self.__unlock_account()
-    tx = self.contract.functions.submitSubmission(submission).transact(self.default_opts)
+    tx = self.contract.functions.submitUpdate(submission).transact(self.default_opts)
     return tx, self.__wait_tx(tx)
 
   def submit_scorings(self, trainers, scores):
     self.__unlock_account()
-    tx = self.contract.functions.submitScorings(trainers, scores).transact(self.default_opts)
+    tx = self.contract.functions.submitScores(trainers, scores).transact(self.default_opts)
     return tx, self.__wait_tx(tx)
 
   def submit_aggregation(self, weights_id):

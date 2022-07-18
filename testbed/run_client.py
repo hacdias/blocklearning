@@ -13,7 +13,7 @@ from blocklearning.contract import RoundPhase
 @click.command()
 @click.option('--provider', default='http://127.0.0.1:8545', help='web3 API HTTP provider')
 @click.option('--ipfs', default='/ip4/127.0.0.1/tcp/5001', help='IPFS API provider')
-@click.option('--abi', default='./build/contracts/NoScoring.json', help='contract abi file')
+@click.option('--abi', default='./build/contracts/NoScore.json', help='contract abi file')
 @click.option('--account', help='ethereum account to use for this computing server', required=True)
 @click.option('--passphrase', help='passphrase to unlock account', required=True)
 @click.option('--contract', help='contract address', required=True)
@@ -38,7 +38,7 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train, test, s
 
   # Set Gaussian Differential Privacy
   priv = None
-  # priv = diffpriv.Gaussian(epsilon=5, sensitivity=1e-1/3)
+  # priv = diffpriv.Gaussian(epsilon=l5, sensitivity=1e-1/3)
   # priv = diffpriv.Gaussian(epsilon=1, sensitivity=1e-1/2)
 
   trainer = blocklearning.Trainer(contract, weights_loader, model, (x_train, y_train, x_test, y_test), logger=log, priv=priv)
@@ -56,9 +56,9 @@ def main(provider, ipfs, abi, account, passphrase, contract, log, train, test, s
   while True:
     try:
       phase = contract.get_round_phase()
-      if phase == RoundPhase.WAITING_FOR_SUBMISSIONS:
+      if phase == RoundPhase.WAITING_FOR_UPDATES:
         trainer.train()
-      elif phase == RoundPhase.WAITING_FOR_SCORINGS and scorer is not None:
+      elif phase == RoundPhase.WAITING_FOR_SCORES and scorer is not None:
         scorer.score()
     except web3.exceptions.ContractLogicError as err:
       print(err, flush=True)

@@ -28,7 +28,7 @@ contract Vertical is Base {
     currentAggregator = (currentAggregator + 1) % aggregators.length;
     selectedTrainers[round] = trainers;
     selectedAggregators[round] = [aggregators[currentAggregator]];
-    roundPhase = RoundPhase.WaitingForSubmissions;
+    roundPhase = RoundPhase.WaitingForUpdates;
   }
 
   function submitAggregation(string memory _weights) public pure override {

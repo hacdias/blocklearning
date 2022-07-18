@@ -22,27 +22,27 @@ contract FirstComeFirstServed is Base {
     round++;
     trainersQuorum[round] = roundTrainers;
     selectedAggregators[round] = roundAggregators;
-    roundPhase = RoundPhase.WaitingForSubmissions;
+    roundPhase = RoundPhase.WaitingForUpdates;
   }
 
   function getRoundForTraining() public view override returns (uint, string memory) {
-    require(roundPhase == RoundPhase.WaitingForSubmissions, "NWFS");
+    require(roundPhase == RoundPhase.WaitingForUpdates, "NWFS");
     return (round, weights[round - 1]);
   }
 
-  function submitSubmission(Submission memory submission) public override {
-    require(submissionsCount[round] < trainersQuorum[round], "QR");
+  function submitUpdate(Update memory submission) public override {
+    require(updatesCount[round] < trainersQuorum[round], "QR");
 
     if (!isSelectedTrainer()) {
       selectedTrainers[round].push(msg.sender);
     }
 
-    super.submitSubmission(submission);
+    super.submitUpdate(submission);
 
-    if (submissionsCount[round] < trainersQuorum[round]) {
-      roundPhase = RoundPhase.WaitingForSubmissions;
+    if (updatesCount[round] < trainersQuorum[round]) {
+      roundPhase = RoundPhase.WaitingForUpdates;
     } else {
-      roundPhase = afterSubmission;
+      roundPhase = afterUpdate;
     }
   }
 }

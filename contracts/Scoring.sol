@@ -3,23 +3,23 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import './Base.sol';
 
-contract Scoring is Base {
+contract Score is Base {
   // Registration Details
-  address[]                 public scorers;
-  mapping(address => bool)  public registeredScorers;
+  address[]                public scorers;
+  mapping(address => bool) public registeredScorers;
 
   // Round Details
-  mapping(uint => address[])  public selectedScorers; // Round => Scorers for the round
+  mapping(uint => address[]) selectedScorers; // Round => Scorers for the round
 
-  // Scoring Details
+  // Score Details
   mapping(uint => uint) scoresCount;                                    // Round => Submited Scores
   mapping(uint => mapping(address => bool)) scoresSubmitted;            // Round => Scorer => Bool
-  mapping(uint => mapping(address => mapping(address => int))) scores;  // Round => Trainer => Scorer => Uint
+  mapping(uint => mapping(address => mapping(address => int))) public scores;  // Round => Trainer => Scorer => Uint
 
   constructor(string memory _model, string memory _weights) Base(
     _model,
     _weights,
-    RoundPhase.WaitingForScorings
+    RoundPhase.WaitingForScores
   ) { }
 
   function registerScorer() public {
@@ -49,27 +49,27 @@ contract Scoring is Base {
     selectedTrainers[round] = roundTrainers;
     selectedAggregators[round] = roundAggregators;
     selectedScorers[round] = roundScorers;
-    roundPhase = RoundPhase.WaitingForSubmissions;
+    roundPhase = RoundPhase.WaitingForUpdates;
   }
 
-  function getSubmissionsForScoring() public view returns (uint, address[] memory, Submission[] memory) {
-    require(roundPhase == RoundPhase.WaitingForScorings, "NWFS");
+  function getUpdatesForScore() public view returns (uint, address[] memory, Update[] memory) {
+    require(roundPhase == RoundPhase.WaitingForScores, "NWFS");
     require(isSelectedScorer(), "CSNS");
 
-    Submission[] memory roundSubmissions = new Submission[](selectedTrainers[round].length);
+    Update[] memory roundUpdates = new Update[](selectedTrainers[round].length);
     address[] memory roundTrainers = new address[](selectedTrainers[round].length);
 
     for (uint i = 0; i < selectedTrainers[round].length; i++) {
       address trainer = selectedTrainers[round][i];
       roundTrainers[i] = trainer;
-      roundSubmissions[i] = submissions[round][trainer];
+      roundUpdates[i] = updates[round][trainer];
     }
 
-    return (round, roundTrainers, roundSubmissions);
+    return (round, roundTrainers, roundUpdates);
   }
 
-  function submitScorings(address[] memory scoreTrainers, int[] memory roundScores) public {
-    require(roundPhase == RoundPhase.WaitingForScorings, "NWFS");
+  function submitScores(address[] memory scoreTrainers, int[] memory roundScores) public {
+    require(roundPhase == RoundPhase.WaitingForScores, "NWFS");
     require(isSelectedScorer(), "CSNS");
     require(scoreTrainers.length == roundScores.length, "NES");
     require(scoresSubmitted[round][msg.sender] == false, "AS");
@@ -90,7 +90,7 @@ contract Scoring is Base {
     }
   }
 
-  function getScorings() public view returns (address[] memory, address[] memory, int[][] memory) {
+  function getScores() public view returns (address[] memory, address[] memory, int[][] memory) {
     require(roundPhase == RoundPhase.WaitingForAggregations, "NWFA");
     require(isSelectedAggregator(), "CSNS");
 
