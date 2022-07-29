@@ -108,7 +108,14 @@ CONTRACT=0x8C3CBC8C31e5171C19d8a26af55E0db284Ae9b4B \
 Start collecting statistics before running the rounds (on the results repository):
 
 ```bash
-./monitor.sh
+DIR=./results/CURRENT/stats
+mkdir -p $DIR
+
+while true; do
+  echo "fetching"
+  docker stats --no-stream --format "{{.ID}}, {{.Name}}, {{.CPUPerc}}, {{.MemUsage}}, {{.MemPerc}}, {{.NetIO}}, {{.BlockIO}}" > $DIR/$(date '+%s').log
+  sleep 2
+done
 ```
 
 ### Run Rounds
@@ -132,7 +139,8 @@ python3 toolkit.py collect-logs
 
 Some *required* base information for the contract can be found in [../contracts.json](../contracts.json). This file includes two fields that must be filled before deploying the contract:
 
-- `model`: the IPFS CID of the exported model in `.h5` format.
+- `model`: the IPFS CID of the exported model (head model for Split-CNN contract) in `.h5` format.
+- `bottomModel`: the IPFS CID of the exported bottom model for the Split-CNN contract in `.h5` format.
 - `weights` (optional): the IPFS CID with the initial weights.
 
 ## IPFS
@@ -211,7 +219,7 @@ python3 start_round.py \
   --rounds 50
 ```
 
-### Vertical
+### Vertical (Split-CNN)
 
 ```bash
 CONSENSUS=poa MINERS=10 docker compose -f blockchain.yml -p bfl up

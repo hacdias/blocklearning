@@ -4,13 +4,15 @@ This code was used during a thesis in order to compare different aspects of Bloc
 
 ## Structure
 
+- [`blocklearning/`](./blocklearning/) contains the modular Python library.
+- [`contracts/`](./contracts/) contains Solidity smart contracts.
+- [`migrations/`](./migrations/) contains smart contract migrations necessary to deploy the smart contracts using [Truffle](https://trufflesuite.com/).
 - [`testbed/`](./testbed/) is the code necessary to run the framework in an experimental setup using Docker.
-- [`blocklearning/`](./blocklearning/) is the modular Python library created to make this system work.
 
-## Results
+## Instructions
 
-The results described in the thesis can be found in [hacdias/blocklearning-results](https://github.com/hacdias/blocklearning-results).
+Please check the [Testbed's README](./testbed/README.md) for instructions on how to run this project.
 
 ## Disclaimer
 
-This is research code and it is free to use.
+This research project was started at [TU Eindhoven](https://tue.nl/). Please cite this work when using it.
