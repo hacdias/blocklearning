@@ -2,6 +2,8 @@
 
 This code was used during a thesis in order to compare different aspects of Blockchain-based Federated Learning systems.
 
+> ⚠️ This repository is archived as it is not being actively maintained. However, if you have any interest in maintaining this repository further or you need some help to use it, please [contact me](https://hacdias.com/contact).
+
 ## Structure
 
 - [`blocklearning/`](./blocklearning/) contains the modular Python library.
