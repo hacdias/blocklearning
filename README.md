@@ -4,6 +4,11 @@ This code was used during a thesis in order to compare different aspects of Bloc
 
 > ⚠️ This repository is archived as it is not being actively maintained. However, if you have any interest in maintaining this repository further or you need some help to use it, please [contact me](https://hacdias.com/contact).
 
+## Thesis Publication
+
+- https://research.tue.nl/en/studentTheses/04a5f7e4-7782-4f26-a864-a49d04f82966
+- https://hacdias.com/2022/09/07/thesis-blocklearning-framework
+
 ## Structure
 
 - [`blocklearning/`](./blocklearning/) contains the modular Python library.
